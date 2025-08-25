@@ -21,4 +21,3 @@ services:
       - key: PORT
         value: 8000
     healthCheckPath: /health
-    plan: starter
