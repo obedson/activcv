@@ -43,7 +43,7 @@ export default function UploadPage() {
     try {
       const response = await apiClient.get('/uploads')
       if (response.data) {
-        setUploads(response.data)
+        setUploads(response.data as Upload[])
       }
     } catch (error) {
       console.error('Failed to load uploads:', error)

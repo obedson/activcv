@@ -51,7 +51,7 @@ export default function ProfilePage() {
       // Load personal info
       const personalInfoResponse = await profileApi.getPersonalInfo()
       if (personalInfoResponse.data) {
-        setPersonalInfo(personalInfoResponse.data)
+        setPersonalInfo(personalInfoResponse.data as PersonalInfo)
       }
 
       // Load profile
@@ -91,7 +91,7 @@ export default function ProfilePage() {
       }
 
       if (response.data) {
-        setPersonalInfo(response.data)
+        setPersonalInfo(response.data as PersonalInfo)
         alert('Personal information saved successfully!')
       } else if (response.error) {
         alert(`Error: ${response.error}`)

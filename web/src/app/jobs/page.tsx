@@ -98,7 +98,7 @@ export default function JobsPage() {
         if (user) {
             loadData()
         }
-    }, [user, activeTab])
+    }, [user, activeTab]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const loadData = async () => {
         setLoading(true)

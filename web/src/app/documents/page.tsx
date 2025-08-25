@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { apiClient } from '@/lib/api';
 
@@ -59,7 +59,7 @@ export default function DocumentsPage() {
             fetchFolders();
             fetchStorageStats();
         }
-    }, [user, authLoading, selectedFolder, selectedDocumentType, searchQuery]);
+    }, [user, authLoading, selectedFolder, selectedDocumentType, searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchDocuments = async () => {
         try {
