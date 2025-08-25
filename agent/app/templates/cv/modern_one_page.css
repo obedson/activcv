@@ -1,0 +1,395 @@
+/* Modern One Page CV Template Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #fff;
+}
+
+.cv-container {
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: 0.75in;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Header Styles */
+.cv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #2c3e50;
+}
+
+.name-section {
+    flex: 1;
+}
+
+.full-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.headline {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.contact-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.contact-icon {
+    width: 16px;
+    text-align: center;
+    color: #3498db;
+    font-weight: bold;
+}
+
+/* Section Styles */
+.cv-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px solid #ecf0f1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    margin-left: 0.5rem;
+}
+
+/* Professional Summary */
+.summary-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+    text-align: justify;
+}
+
+/* Experience Styles */
+.experience-item {
+    margin-bottom: 1.8rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.experience-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.experience-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.experience-title-company {
+    flex: 1;
+}
+
+.experience-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;
+}
+
+.experience-company {
+    font-size: 1rem;
+    color: #3498db;
+    font-weight: 500;
+}
+
+.experience-dates {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.experience-location {
+    font-size: 0.9rem;
+    color: #95a5a6;
+    margin-bottom: 0.8rem;
+    font-style: italic;
+}
+
+.experience-description {
+    margin-bottom: 0.8rem;
+}
+
+.experience-description p {
+    color: #555;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.experience-achievements {
+    list-style: none;
+    padding-left: 0;
+}
+
+.experience-achievements li {
+    position: relative;
+    padding-left: 1.2rem;
+    margin-bottom: 0.4rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+.experience-achievements li:before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #3498db;
+    font-weight: bold;
+}
+
+/* Skills Styles */
+.skill-category {
+    margin-bottom: 1.2rem;
+}
+
+.skill-category-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skill-item {
+    background: #ecf0f1;
+    color: #2c3e50;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid #bdc3c7;
+    transition: all 0.2s ease;
+}
+
+.skill-item:hover {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+/* Education Styles */
+.education-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.education-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.education-degree h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;
+}
+
+.education-institution {
+    font-size: 1rem;
+    color: #3498db;
+    font-weight: 500;
+}
+
+.education-date {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.education-gpa {
+    font-size: 0.9rem;
+    color: #27ae60;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.education-description p {
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* Certifications Styles */
+.certification-item {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.certification-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.certification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.3rem;
+}
+
+.certification-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.certification-date {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.certification-issuer {
+    font-size: 0.95rem;
+    color: #3498db;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.certification-id {
+    font-size: 0.85rem;
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* Footer Styles */
+.cv-footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ecf0f1;
+    text-align: center;
+}
+
+.generated-date {
+    font-size: 0.8rem;
+    color: #95a5a6;
+    margin-bottom: 0.3rem;
+}
+
+.ai-notice {
+    font-size: 0.75rem;
+    color: #3498db;
+    font-style: italic;
+}
+
+/* Keyword Highlighting */
+.keyword-highlight {
+    background-color: #f1c40f;
+    padding: 0.1rem 0.2rem;
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+/* Print Styles */
+@media print {
+    .cv-container {
+        box-shadow: none;
+        padding: 0.5in;
+    }
+    
+    .cv-header {
+        page-break-after: avoid;
+    }
+    
+    .cv-section {
+        page-break-inside: avoid;
+    }
+    
+    .experience-item,
+    .education-item,
+    .certification-item {
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cv-container {
+        padding: 1rem;
+    }
+    
+    .cv-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .contact-section {
+        align-items: flex-start;
+    }
+    
+    .full-name {
+        font-size: 2rem;
+    }
+    
+    .experience-header,
+    .education-header,
+    .certification-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    
+    .skill-list {
+        justify-content: flex-start;
+    }
+}

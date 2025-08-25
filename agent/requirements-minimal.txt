@@ -1,0 +1,30 @@
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Pydantic and validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Supabase client
+supabase==2.3.0
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+aiofiles==23.2.1
+
+# PDF processing
+pypdf==3.17.4
+
+# Templates
+jinja2==3.1.2
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Web scraping
+beautifulsoup4==4.12.2
+schedule==1.2.0

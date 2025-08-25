@@ -1,0 +1,40 @@
+# Worker Dockerfile for background job processing
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    ENVIRONMENT=production
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        libffi-dev \
+        libssl-dev \
+        wkhtmltopdf \
+        xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Create non-root user
+RUN adduser --disabled-password --gecos '' worker \
+    && chown -R worker:worker /app
+USER worker
+
+# Create storage directory
+RUN mkdir -p /app/storage
+
+# Run worker
+CMD ["python", "-m", "app.worker"]

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter - {{ personal_info.first_name }} {{ personal_info.last_name }}</title>
+    <link rel="stylesheet" href="professional_standard.css">
+</head>
+<body>
+    <div class="cover-letter-container">
+        <!-- Header with Contact Information -->
+        <header class="letter-header">
+            <div class="sender-info">
+                <h1 class="sender-name">{{ personal_info.first_name }} {{ personal_info.last_name }}</h1>
+                <div class="contact-details">
+                    {% if personal_info.email %}
+                    <div class="contact-item">{{ personal_info.email }}</div>
+                    {% endif %}
+                    {% if personal_info.phone %}
+                    <div class="contact-item">{{ personal_info.phone|format_phone }}</div>
+                    {% endif %}
+                    {% if personal_info.city and personal_info.country %}
+                    <div class="contact-item">{{ personal_info.city }}, {{ personal_info.country }}</div>
+                    {% endif %}
+                    {% if profile.linkedin_url %}
+                    <div class="contact-item">{{ profile.linkedin_url }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Date -->
+        <div class="letter-date">
+            {{ current_date }}
+        </div>
+
+        <!-- Recipient Information -->
+        <div class="recipient-info">
+            <div class="recipient-name">{{ hiring_manager }}</div>
+            {% if job.company %}
+            <div class="company-name">{{ job.company }}</div>
+            {% endif %}
+            {% if company_address %}
+            <div class="company-address">{{ company_address }}</div>
+            {% elif job.location %}
+            <div class="company-address">{{ job.location }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Subject Line (Optional) -->
+        {% if position_reference %}
+        <div class="subject-line">
+            <strong>Re: {{ position_reference }}</strong>
+        </div>
+        {% endif %}
+
+        <!-- Letter Content -->
+        <div class="letter-content">
+            <!-- Salutation -->
+            <div class="salutation">
+                Dear {{ hiring_manager }},
+            </div>
+
+            <!-- Opening Paragraph -->
+            <div class="paragraph opening-paragraph">
+                {{ ai_content.opening_paragraph or "I am writing to express my strong interest in the " + job.title + " position at " + job.company + ". With my background and experience, I am confident I would be a valuable addition to your team." }}
+            </div>
+
+            <!-- Body Paragraph 1 - Experience -->
+            <div class="paragraph body-paragraph">
+                {{ ai_content.body_paragraph_1 or "In my previous roles, I have developed expertise that aligns with your requirements. My experience includes successful project delivery, team collaboration, and achieving measurable results in dynamic environments." }}
+            </div>
+
+            <!-- Body Paragraph 2 - Skills and Value -->
+            <div class="paragraph body-paragraph">
+                {{ ai_content.body_paragraph_2 or "My skills and professional competencies make me well-suited for this role. I bring strong analytical abilities, excellent communication skills, and a proven track record of driving results." }}
+            </div>
+
+            <!-- Key Achievements (if available) -->
+            {% if ai_content.key_achievements and ai_content.key_achievements|length > 0 %}
+            <div class="paragraph achievements-paragraph">
+                Some of my key achievements include:
+                <ul class="achievements-list">
+                    {% for achievement in ai_content.key_achievements[:3] %}
+                    <li>{{ achievement }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Closing Paragraph -->
+            <div class="paragraph closing-paragraph">
+                {{ ai_content.closing_paragraph or "I would welcome the opportunity to discuss how my experience can contribute to " + job.company + "'s continued success. Thank you for considering my application, and I look forward to hearing from you." }}
+            </div>
+
+            <!-- Sign-off -->
+            <div class="sign-off">
+                <div class="closing-phrase">Sincerely,</div>
+                <div class="signature-space"></div>
+                <div class="printed-name">{{ personal_info.first_name }} {{ personal_info.last_name }}</div>
+            </div>
+        </div>
+
+        <!-- Footer (Optional) -->
+        <footer class="letter-footer">
+            {% if ai_content.call_to_action %}
+            <div class="call-to-action">{{ ai_content.call_to_action }}</div>
+            {% endif %}
+        </footer>
+    </div>
+</body>
+</html>
