@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 from crewai import Agent, Task, Crew, Process
 from crewai.tools import BaseTool
-from langchain.llms import OpenAI
+from langchain_openai import OpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings

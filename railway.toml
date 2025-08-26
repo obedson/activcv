@@ -1,0 +1,18 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd agent && pip install -r requirements.txt"
+
+[deploy]
+startCommand = "cd agent && python main.py"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[environments.production]
+variables = { }
+
+[environments.production.build]
+builder = "nixpacks"
+buildCommand = "cd agent && pip install -r requirements.txt"
+
+[environments.production.deploy]
+startCommand = "cd agent && python main.py"

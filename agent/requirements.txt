@@ -12,7 +12,10 @@ email-validator==2.1.0
 supabase==2.3.0
 
 # AI and automation
-crewai==0.28.8
+crewai==0.22.5
+langchain==0.1.20
+langchain-openai==0.0.5
+langchain-google-genai==0.0.11
 
 # Configuration and environment
 python-dotenv==1.0.0
