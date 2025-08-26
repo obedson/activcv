@@ -75,6 +75,29 @@ async def test_endpoint():
         "google_api_configured": bool(settings.GOOGLE_API_KEY)
     }
 
+# Include the uploads router
+try:
+    from app.api.v1.endpoints.uploads import router as uploads_router
+    app.include_router(uploads_router, prefix="/api/v1/uploads", tags=["uploads"])
+    print("✅ Uploads router included")
+except ImportError as e:
+    print(f"⚠️ Could not import uploads router: {e}")
+
+# Include other essential routers
+try:
+    from app.api.v1.endpoints.profiles import router as profiles_router
+    app.include_router(profiles_router, prefix="/api/v1/profiles", tags=["profiles"])
+    print("✅ Profiles router included")
+except ImportError as e:
+    print(f"⚠️ Could not import profiles router: {e}")
+
+try:
+    from app.api.v1.endpoints.jobs import router as jobs_router
+    app.include_router(jobs_router, prefix="/api/v1/jobs", tags=["jobs"])
+    print("✅ Jobs router included")
+except ImportError as e:
+    print(f"⚠️ Could not import jobs router: {e}")
+
 # Global exception handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
