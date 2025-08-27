@@ -20,10 +20,10 @@ except ImportError as e:
     print(f"❌ CrewAI core classes import failed: {e}")
 
 try:
-    from crewai.tools import BaseTool
-    print("✅ BaseTool imported successfully")
+    from crewai import tool
+    print("✅ CrewAI tool decorator imported successfully")
 except ImportError as e:
-    print(f"❌ BaseTool import failed: {e}")
+    print(f"❌ CrewAI tool decorator import failed: {e}")
 
 try:
     from langchain_openai import OpenAI
@@ -42,8 +42,8 @@ try:
     import os
     import sys
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from app.services.crew_agents import CrewAIService
-    print("✅ CrewAI service import successful")
+    from app.services.crew_agents import CrewAIService, cv_analysis_tool, job_matching_tool
+    print("✅ CrewAI service and tools import successful")
 except ImportError as e:
     print(f"❌ CrewAI service import failed: {e}")
 except Exception as e:
