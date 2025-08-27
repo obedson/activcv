@@ -12,6 +12,8 @@ try:
     print(f"✅ CrewAI version: {crewai.__version__}")
 except ImportError as e:
     print(f"❌ CrewAI import failed: {e}")
+except AttributeError:
+    print("✅ CrewAI imported (version not available)")
 
 try:
     from crewai import Agent, Task, Crew, Process
@@ -20,16 +22,16 @@ except ImportError as e:
     print(f"❌ CrewAI core classes import failed: {e}")
 
 try:
-    from crewai import tool
-    print("✅ CrewAI tool decorator imported successfully")
+    from crewai.tools import BaseTool
+    print("✅ BaseTool imported successfully")
 except ImportError as e:
-    print(f"❌ CrewAI tool decorator import failed: {e}")
+    print(f"❌ BaseTool import failed: {e}")
 
 try:
-    from langchain_openai import OpenAI
-    print("✅ OpenAI import successful")
+    from langchain_openai import ChatOpenAI
+    print("✅ ChatOpenAI import successful")
 except ImportError as e:
-    print(f"❌ OpenAI import failed: {e}")
+    print(f"❌ ChatOpenAI import failed: {e}")
 
 try:
     from langchain_google_genai import ChatGoogleGenerativeAI
@@ -42,8 +44,14 @@ try:
     import os
     import sys
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from app.services.crew_agents import CrewAIService, cv_analysis_tool, job_matching_tool
+    from app.services.crew_agents import CrewAIService, CVAnalysisTool, JobMatchingTool
     print("✅ CrewAI service and tools import successful")
+    
+    # Test tool instantiation
+    cv_tool = CVAnalysisTool()
+    job_tool = JobMatchingTool()
+    print("✅ Tool instantiation successful")
+    
 except ImportError as e:
     print(f"❌ CrewAI service import failed: {e}")
 except Exception as e:
