@@ -1,12 +1,12 @@
 """
 CrewAI agents for intelligent CV processing and generation
-Updated for CrewAI 0.165.1
+Updated for latest CrewAI with LiteLLM (standalone architecture)
 """
 
 import os
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from crewai import Agent, Task, Crew, Process, LLM
+from crewai import Agent, Task, Crew, Process
 from crewai.tools import BaseTool
 
 from app.core.config import settings
@@ -130,28 +130,31 @@ class JobMatchingTool(BaseTool):
 
 
 class CrewAIService:
-    """Service for managing CrewAI agents and tasks"""
+    """Service for managing CrewAI agents and tasks with latest API"""
     
     def __init__(self):
-        self.llm = self._get_llm()
         self.tools = [CVAnalysisTool(), JobMatchingTool()]
     
-    def _get_llm(self):
-        """Get the appropriate LLM based on configuration"""
+    def _get_llm_config(self):
+        """Get LLM configuration for latest CrewAI with LiteLLM"""
         if settings.GOOGLE_API_KEY:
-            return LLM(
-                model="gemini/gemini-pro",
-                api_key=settings.GOOGLE_API_KEY,
-                temperature=0.7
-            )
+            return {
+                "model": "gemini/gemini-pro",
+                "api_key": settings.GOOGLE_API_KEY,
+                "temperature": 0.7
+            }
         elif settings.OPENAI_API_KEY:
-            return LLM(
-                model="openai/gpt-3.5-turbo",
-                api_key=settings.OPENAI_API_KEY,
-                temperature=0.7
-            )
+            return {
+                "model": "gpt-3.5-turbo",
+                "api_key": settings.OPENAI_API_KEY,
+                "temperature": 0.7
+            }
         else:
-            raise ValueError("No API key configured for LLM")
+            # Use default OpenAI configuration
+            return {
+                "model": "gpt-3.5-turbo",
+                "temperature": 0.7
+            }
     
     def create_cv_agent(self) -> Agent:
         """Create an agent specialized in CV analysis and generation"""

@@ -9,7 +9,10 @@ from .parser import CVParserService
 from .job_watchlist import JobWatchlistService
 from .job_crawler import JobCrawlerService
 from .job_matcher import JobMatcherService
-from .crew_agents import CrewAIService, crew_service
+from .crew_agents import CrewAIService, get_crew_service
+
+# Use lazy loading to avoid import-time errors
+crew_service = get_crew_service
 from .cv_generator import CVGeneratorService, cv_generator
 from .email_service import EmailService, email_service
 

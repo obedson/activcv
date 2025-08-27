@@ -1,5 +1,5 @@
 # Core FastAPI and web framework
-fastapi==0.104.1
+fastapi>=0.104.1  # Flexible version to avoid CrewAI conflicts
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
 
@@ -12,7 +12,7 @@ email-validator==2.1.0
 supabase==2.3.0
 
 # AI and automation
-# crewai==0.80.0  # Disabled due to dependency conflicts
+crewai  # Latest version, uses LiteLLM
 # langchain==0.1.20  # Not needed - CrewAI 0.165.1 has built-in LLM
 # langchain-openai==0.0.5  # Not needed - CrewAI 0.165.1 has built-in LLM
 # langchain-google-genai==0.0.11  # Not needed - CrewAI 0.165.1 has built-in LLM
@@ -52,7 +52,7 @@ celery==5.3.4
 pytest==7.4.3
 pytest-asyncio==0.21.1
 pytest-cov==4.1.0
-httpx>=0.24.0,<0.25.0
+httpx>=0.24.0  # Flexible version for CrewAI compatibility
 
 # Code quality and formatting
 black==23.11.0
