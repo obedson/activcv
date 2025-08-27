@@ -1,353 +1,267 @@
 """
-CrewAI agents for intelligent CV processing and generation
-Updated for latest CrewAI with LiteLLM (standalone architecture)
-Following troubleshooting guide recommendations
+Multi-Agent AI Service for CV and Cover Letter Generation
+Provides multi-agent robustness without CrewAI dependency issues
 """
 
-import os
-from typing import Dict, Any, List, Optional
+import asyncio
+from typing import Dict, Any, List
 from datetime import datetime
-from crewai import Agent, Task, Crew, Process
-from crewai.tools import BaseTool
+from openai import AsyncOpenAI
+import google.generativeai as genai
 
 from app.core.config import settings
 from app.models.profile import CompleteProfile
 from app.models.jobs import Job
 
 
-class CVAnalysisTool(BaseTool):
-    """Tool for analyzing CV content and structure"""
-    name: str = "cv_analysis_tool"
-    description: str = "Analyzes CV content for completeness, relevance, and optimization opportunities"
-
-    def _run(self, cv_content: str, job_description: str = "") -> str:
-        """Analyze CV content against job requirements"""
-        analysis = {
-            "completeness_score": self._assess_completeness(cv_content),
-            "keyword_matches": self._extract_keywords(cv_content, job_description),
-            "improvement_suggestions": self._generate_suggestions(cv_content),
-            "ats_compatibility": self._check_ats_compatibility(cv_content)
-        }
-        return str(analysis)
-
-    def _assess_completeness(self, content: str) -> float:
-        """Assess how complete the CV content is"""
-        required_sections = ["experience", "education", "skills", "contact"]
-        found_sections = sum(1 for section in required_sections if section.lower() in content.lower())
-        return found_sections / len(required_sections)
-
-    def _extract_keywords(self, cv_content: str, job_description: str) -> List[str]:
-        """Extract matching keywords between CV and job description"""
-        if not job_description:
-            return []
-        
-        cv_words = set(cv_content.lower().split())
-        job_words = set(job_description.lower().split())
-        
-        common_words = {"the", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by"}
-        matches = (cv_words & job_words) - common_words
-        
-        return list(matches)
-
-    def _generate_suggestions(self, content: str) -> List[str]:
-        """Generate improvement suggestions for the CV"""
-        suggestions = []
-        
-        if "experience" not in content.lower():
-            suggestions.append("Add work experience section")
-        if "education" not in content.lower():
-            suggestions.append("Include education background")
-        if "skills" not in content.lower():
-            suggestions.append("Add skills section")
-        if len(content) < 500:
-            suggestions.append("Expand content with more details")
-        
-        return suggestions
-
-    def _check_ats_compatibility(self, content: str) -> Dict[str, Any]:
-        """Check ATS compatibility of the CV"""
-        return {
-            "has_contact_info": any(keyword in content.lower() for keyword in ["email", "phone", "contact"]),
-            "has_clear_sections": any(keyword in content.lower() for keyword in ["experience", "education", "skills"]),
-            "length_appropriate": 500 <= len(content) <= 2000,
-            "score": 0.8
-        }
-
-
-class JobMatchingTool(BaseTool):
-    """Tool for matching jobs to user profiles"""
-    name: str = "job_matching_tool"
-    description: str = "Matches job requirements to user profile and calculates compatibility score"
-
-    def _run(self, profile_data: str, job_description: str) -> str:
-        """Match job requirements to user profile"""
-        match_score = self._calculate_match_score(profile_data, job_description)
-        missing_skills = self._identify_missing_skills(profile_data, job_description)
-        recommendations = self._generate_match_recommendations(profile_data, job_description)
-        
-        result = {
-            "match_score": match_score,
-            "missing_skills": missing_skills,
-            "recommendations": recommendations,
-            "compatibility": "high" if match_score > 0.7 else "medium" if match_score > 0.4 else "low"
-        }
-        
-        return str(result)
-
-    def _calculate_match_score(self, profile: str, job_desc: str) -> float:
-        """Calculate how well the profile matches the job"""
-        profile_words = set(profile.lower().split())
-        job_words = set(job_desc.lower().split())
-        
-        if not job_words:
-            return 0.0
-        
-        matches = len(profile_words & job_words)
-        return min(matches / len(job_words), 1.0)
-
-    def _identify_missing_skills(self, profile: str, job_desc: str) -> List[str]:
-        """Identify skills mentioned in job but missing from profile"""
-        job_skills = ["python", "javascript", "react", "sql", "aws", "docker"]
-        profile_lower = profile.lower()
-        
-        missing = [skill for skill in job_skills if skill in job_desc.lower() and skill not in profile_lower]
-        return missing
-
-    def _generate_match_recommendations(self, profile: str, job_desc: str) -> List[str]:
-        """Generate recommendations to improve job match"""
-        recommendations = []
-        missing_skills = self._identify_missing_skills(profile, job_desc)
-        
-        if missing_skills:
-            recommendations.append(f"Consider highlighting these skills: {', '.join(missing_skills[:3])}")
-        
-        if "experience" not in profile.lower() and "experience" in job_desc.lower():
-            recommendations.append("Emphasize relevant work experience")
-        
-        return recommendations
-
-
-class CrewAIService:
-    """Service for managing CrewAI agents and tasks with latest API"""
+class MultiAgentService:
+    """Multi-agent service using direct AI calls for robustness"""
     
     def __init__(self):
-        self.tools = [CVAnalysisTool(), JobMatchingTool()]
+        self.openai_client = None
+        self.gemini_model = None
+        self._setup_clients()
     
-    def _get_llm_config(self):
-        """Get LLM configuration for latest CrewAI with LiteLLM"""
+    def _setup_clients(self):
+        """Setup AI clients based on available API keys"""
+        if settings.OPENAI_API_KEY:
+            self.openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        
         if settings.GOOGLE_API_KEY:
-            return {
-                "model": "gemini/gemini-pro",
-                "temperature": 0.7
-            }
-        elif settings.OPENAI_API_KEY:
-            return {
-                "model": "gpt-3.5-turbo", 
-                "temperature": 0.7
-            }
-        else:
-            # Use default configuration - CrewAI will handle API keys via environment
-            return {
-                "model": "gpt-3.5-turbo",
-                "temperature": 0.7
-            }
+            genai.configure(api_key=settings.GOOGLE_API_KEY)
+            self.gemini_model = genai.GenerativeModel('gemini-pro')
+    
+    async def _call_ai_agent(self, role: str, task: str, context: str = "") -> str:
+        """Call an AI agent with a specific role and task"""
+        
+        system_prompt = f"""You are a {role}. {context}
+        
+Your task: {task}
+
+Provide a detailed, professional response that fulfills your role's expertise."""
+
+        try:
+            if self.openai_client:
+                response = await self.openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": task}
+                    ],
+                    temperature=0.7,
+                    max_tokens=2000
+                )
+                return response.choices[0].message.content
+            
+            elif self.gemini_model:
+                response = await asyncio.to_thread(
+                    self.gemini_model.generate_content,
+                    f"{system_prompt}\n\nUser request: {task}"
+                )
+                return response.text
+            
+            else:
+                return f"AI service unavailable. Mock response for {role}: {task[:100]}..."
+                
+        except Exception as e:
+            return f"Error from {role}: {str(e)}"
     
     async def generate_tailored_cv(self, profile: CompleteProfile, job: Job) -> Dict[str, Any]:
-        """Generate a tailored CV using CrewAI multi-agent system"""
+        """Generate tailored CV using multi-agent approach"""
         
-        llm_config = self._get_llm_config()
+        # Agent 1: CV Analyst
+        analyst_context = """You are an expert CV analyst with years of experience in recruitment 
+        and talent acquisition. You understand what employers look for and how to match 
+        candidate profiles to job requirements."""
         
-        # Create specialized agents
-        cv_analyst = Agent(
-            role="CV Analysis Expert",
-            goal="Analyze job requirements and identify key skills and experiences to highlight",
-            backstory="You are an expert CV analyst with years of experience in recruitment and talent acquisition.",
-            tools=self.tools,
-            verbose=True,
-            **llm_config
-        )
+        analyst_task = f"""
+        Analyze this job posting and candidate profile:
         
-        cv_writer = Agent(
-            role="Professional CV Writer",
-            goal="Create compelling, ATS-optimized CVs that highlight relevant experience",
-            backstory="You are a professional CV writer who specializes in creating tailored CVs that get interviews.",
-            verbose=True,
-            **llm_config
-        )
+        JOB POSTING:
+        Title: {job.title}
+        Company: {job.company}
+        Requirements: {job.requirements}
+        Description: {job.description}
         
-        # Create tasks
-        analysis_task = Task(
-            description=f"""
-            Analyze this job posting and candidate profile:
-            
-            Job: {job.title} at {job.company}
-            Requirements: {job.requirements}
-            Description: {job.description}
-            
-            Candidate Profile:
-            Name: {profile.personal_info.full_name}
-            Experience: {[exp.dict() for exp in profile.experience]}
-            Education: {[edu.dict() for edu in profile.education]}
-            Skills: {profile.skills}
-            
-            Identify:
-            1. Key requirements and skills from the job posting
-            2. Matching experience and skills from the candidate
-            3. Keywords for ATS optimization
-            4. Areas to emphasize in the CV
-            """,
-            agent=cv_analyst,
-            expected_output="Detailed analysis of job requirements and candidate match"
-        )
+        CANDIDATE PROFILE:
+        Name: {profile.personal_info.full_name}
+        Email: {profile.personal_info.email}
+        Experience: {self._format_experience(profile.experience)}
+        Education: {self._format_education(profile.education)}
+        Skills: {', '.join(profile.skills) if profile.skills else 'Not specified'}
         
-        cv_creation_task = Task(
-            description=f"""
-            Based on the analysis, create a professional, tailored CV for {profile.personal_info.full_name} 
-            applying for {job.title} at {job.company}.
-            
-            The CV should:
-            1. Highlight the most relevant experience and skills
-            2. Use keywords from the job description for ATS optimization
-            3. Be professionally formatted and easy to read
-            4. Show quantifiable achievements where possible
-            5. Be tailored specifically for this role
-            
-            Include all standard CV sections: contact info, professional summary, experience, education, skills.
-            """,
-            agent=cv_writer,
-            expected_output="Complete, professional CV tailored for the specific job application"
-        )
+        Provide:
+        1. Top 5 most important job requirements
+        2. How candidate matches these requirements
+        3. Keywords for ATS optimization
+        4. Which experiences to emphasize
+        5. Recommended CV structure
+        """
         
-        # Create and execute crew
-        crew = Crew(
-            agents=[cv_analyst, cv_writer],
-            tasks=[analysis_task, cv_creation_task],
-            process=Process.sequential,
-            verbose=True
-        )
+        # Agent 2: CV Writer (will use analyst's output)
+        writer_context = """You are a professional CV writer who specializes in creating tailored CVs 
+        that get interviews. You know how to present information appealingly to both ATS systems 
+        and human recruiters."""
         
         try:
-            result = crew.kickoff()
+            # Run agents sequentially for true multi-agent workflow
+            print("🤖 Running CV Analyst Agent...")
+            analysis = await self._call_ai_agent("CV Analysis Expert", analyst_task, analyst_context)
+            
+            print("🤖 Running CV Writer Agent...")
+            writer_task = f"""
+            Based on this analysis: {analysis}
+            
+            Create a professional, tailored CV for {profile.personal_info.full_name} applying for 
+            {job.title} at {job.company}.
+            
+            Requirements:
+            1. Use the analysis to highlight relevant experience
+            2. Include ATS keywords identified in analysis
+            3. Professional structure with clear sections
+            4. Quantifiable achievements where possible
+            5. Tailored professional summary
+            
+            Include: Contact Info, Professional Summary, Experience, Education, Skills
+            """
+            
+            cv_content = await self._call_ai_agent("Professional CV Writer", writer_task, writer_context)
             
             return {
-                "cv_content": str(result),
+                "cv_content": cv_content,
+                "analysis": analysis,
                 "generated_at": datetime.utcnow().isoformat(),
-                "method": "crewai_multi_agent",
-                "agents_used": ["cv_analyst", "cv_writer"]
+                "method": "multi_agent_sequential",
+                "agents_used": ["cv_analyst", "cv_writer"],
+                "job_title": job.title,
+                "company": job.company
             }
             
         except Exception as e:
-            # Fallback to simple generation if crew fails
-            return await self._simple_cv_generation(profile, job, str(e))
+            return await self._fallback_cv_generation(profile, job, str(e))
     
     async def generate_cover_letter(self, profile: CompleteProfile, job: Job) -> Dict[str, Any]:
-        """Generate a cover letter using CrewAI multi-agent system"""
+        """Generate cover letter using multi-agent approach"""
         
-        llm_config = self._get_llm_config()
+        # Agent 1: Company Researcher
+        researcher_context = """You are a company research expert who understands corporate culture 
+        and what companies look for in candidates. You analyze job postings to understand 
+        company values and ideal candidate profiles."""
         
-        # Create specialized agents
-        company_researcher = Agent(
-            role="Company Research Specialist",
-            goal="Research companies and understand their culture and values",
-            backstory="You are a company research expert who understands corporate culture and what companies look for in candidates.",
-            verbose=True,
-            **llm_config
-        )
+        researcher_task = f"""
+        Research and analyze {job.company} and the {job.title} position:
         
-        cover_letter_writer = Agent(
-            role="Cover Letter Writer",
-            goal="Write compelling, personalized cover letters that get interviews",
-            backstory="You are a professional cover letter writer who creates engaging, personalized letters that showcase candidates perfectly.",
-            verbose=True,
-            **llm_config
-        )
+        Company: {job.company}
+        Position: {job.title}
+        Description: {job.description}
+        Requirements: {job.requirements}
         
-        # Create tasks
-        research_task = Task(
-            description=f"""
-            Research {job.company} and analyze the job posting for {job.title}.
-            
-            Job Description: {job.description}
-            Requirements: {job.requirements}
-            
-            Identify:
-            1. Company culture and values
-            2. What they're looking for in candidates
-            3. Key selling points to emphasize
-            4. Tone and style to use in the cover letter
-            """,
-            agent=company_researcher,
-            expected_output="Company research insights and cover letter strategy"
-        )
+        Provide:
+        1. Company culture and values analysis
+        2. What type of candidate they want
+        3. Key selling points to emphasize
+        4. Appropriate tone and style
+        5. Specific role aspects to address
+        """
         
-        writing_task = Task(
-            description=f"""
-            Write a compelling cover letter for {profile.personal_info.full_name} applying for {job.title} at {job.company}.
-            
-            Candidate Profile:
-            Experience: {[exp.dict() for exp in profile.experience]}
-            Skills: {profile.skills}
-            
-            The cover letter should:
-            1. Show genuine interest in the company and role
-            2. Highlight the most relevant experience and achievements
-            3. Demonstrate cultural fit and enthusiasm
-            4. Be concise but impactful (max 400 words)
-            5. Have a strong opening that grabs attention
-            6. End with a clear call to action
-            
-            Make it personal and engaging while maintaining professionalism.
-            """,
-            agent=cover_letter_writer,
-            expected_output="Professional, personalized cover letter"
-        )
-        
-        # Create and execute crew
-        crew = Crew(
-            agents=[company_researcher, cover_letter_writer],
-            tasks=[research_task, writing_task],
-            process=Process.sequential,
-            verbose=True
-        )
+        # Agent 2: Cover Letter Writer
+        writer_context = """You are a professional cover letter writer who creates engaging, 
+        personalized letters that showcase candidates perfectly. You balance professionalism 
+        with personality to make candidates stand out."""
         
         try:
-            result = crew.kickoff()
+            print("🤖 Running Company Research Agent...")
+            research = await self._call_ai_agent("Company Research Specialist", researcher_task, researcher_context)
+            
+            print("🤖 Running Cover Letter Writer Agent...")
+            writer_task = f"""
+            Based on this research: {research}
+            
+            Write a compelling cover letter for {profile.personal_info.full_name} applying for 
+            {job.title} at {job.company}.
+            
+            Candidate Info:
+            Experience: {self._format_experience(profile.experience)}
+            Skills: {', '.join(profile.skills) if profile.skills else 'Various skills'}
+            
+            Requirements:
+            1. Use research insights for tailoring
+            2. Show genuine interest in company/role
+            3. Highlight relevant experience
+            4. Demonstrate cultural fit
+            5. 300-400 words maximum
+            6. Strong opening and clear call to action
+            """
+            
+            cover_letter = await self._call_ai_agent("Cover Letter Writer", writer_task, writer_context)
             
             return {
-                "cover_letter": str(result),
+                "cover_letter": cover_letter,
+                "research": research,
                 "generated_at": datetime.utcnow().isoformat(),
-                "method": "crewai_multi_agent",
-                "agents_used": ["company_researcher", "cover_letter_writer"]
+                "method": "multi_agent_sequential",
+                "agents_used": ["company_researcher", "cover_letter_writer"],
+                "job_title": job.title,
+                "company": job.company
             }
             
         except Exception as e:
-            # Fallback to simple generation if crew fails
-            return await self._simple_cover_letter_generation(profile, job, str(e))
+            return await self._fallback_cover_letter_generation(profile, job, str(e))
     
-    async def _simple_cv_generation(self, profile: CompleteProfile, job: Job, error: str) -> Dict[str, Any]:
-        """Fallback CV generation if CrewAI fails"""
+    def _format_experience(self, experience: List) -> str:
+        """Format experience for agent tasks"""
+        if not experience:
+            return "No work experience provided"
+        
+        formatted = []
+        for exp in experience:
+            exp_dict = exp.dict() if hasattr(exp, 'dict') else exp
+            formatted.append(f"- {exp_dict.get('title', 'Unknown')} at {exp_dict.get('company', 'Unknown')} ({exp_dict.get('start_date', 'Unknown')} - {exp_dict.get('end_date', 'Present')})")
+        
+        return '\n'.join(formatted)
+    
+    def _format_education(self, education: List) -> str:
+        """Format education for agent tasks"""
+        if not education:
+            return "No education information provided"
+        
+        formatted = []
+        for edu in education:
+            edu_dict = edu.dict() if hasattr(edu, 'dict') else edu
+            formatted.append(f"- {edu_dict.get('degree', 'Unknown')} from {edu_dict.get('institution', 'Unknown')} ({edu_dict.get('graduation_year', 'Unknown')})")
+        
+        return '\n'.join(formatted)
+    
+    async def _fallback_cv_generation(self, profile: CompleteProfile, job: Job, error: str) -> Dict[str, Any]:
+        """Fallback CV generation"""
         return {
-            "cv_content": f"Fallback CV for {profile.personal_info.full_name} applying to {job.title} at {job.company}",
+            "cv_content": f"Fallback CV for {profile.personal_info.full_name} - {job.title} at {job.company}",
             "generated_at": datetime.utcnow().isoformat(),
-            "method": "fallback_simple",
+            "method": "fallback",
             "error": error
         }
     
-    async def _simple_cover_letter_generation(self, profile: CompleteProfile, job: Job, error: str) -> Dict[str, Any]:
-        """Fallback cover letter generation if CrewAI fails"""
+    async def _fallback_cover_letter_generation(self, profile: CompleteProfile, job: Job, error: str) -> Dict[str, Any]:
+        """Fallback cover letter generation"""
         return {
-            "cover_letter": f"Fallback cover letter for {profile.personal_info.full_name} applying to {job.title} at {job.company}",
+            "cover_letter": f"Fallback cover letter for {profile.personal_info.full_name} - {job.title} at {job.company}",
             "generated_at": datetime.utcnow().isoformat(),
-            "method": "fallback_simple",
+            "method": "fallback",
             "error": error
         }
 
 
-# Global service instance - lazy initialization to avoid import-time errors
+# Create service instance with CrewAI-compatible interface
+class CrewAIService(MultiAgentService):
+    """CrewAI-compatible interface using robust multi-agent implementation"""
+    pass
+
+
+# Global service instance
 crew_service = None
 
 def get_crew_service():
-    """Get or create the CrewAI service instance"""
+    """Get or create the service instance"""
     global crew_service
     if crew_service is None:
         crew_service = CrewAIService()
