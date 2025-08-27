@@ -57,7 +57,8 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     SMTP_USE_TLS: bool = True
     
-    # OpenAI Configuration (for CrewAI)
+    # AI Service Configuration
+    AI_SERVICE_TYPE: str = "simple"  # simple, langchain, openai_assistant, crewai (for CrewAI)
     OPENAI_API_KEY: str = ""
     
     # Logging Configuration
