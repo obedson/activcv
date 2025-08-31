@@ -3,6 +3,11 @@ AI CV Agent FastAPI Application
 Main entry point for the CV generation and tailoring service.
 """
 
+# Suppress cryptography deprecation warnings from PyPDF
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="pypdf")
+warnings.filterwarnings("ignore", message=".*ARC4.*", category=DeprecationWarning)
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse

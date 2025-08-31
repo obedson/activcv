@@ -7,10 +7,13 @@ An intelligent career companion that automatically tailors your CV and matches y
 ## Project Structure
 
 ```
-├── web/          # Next.js frontend application
-├── agent/        # FastAPI backend with CrewAI agents
-├── infra/        # Infrastructure configuration (Supabase, etc.)
-└── .kiro/        # Kiro specifications and documentation
+├── web/                    # Next.js frontend application
+├── agent/                  # FastAPI backend with CrewAI agents
+├── infra/                  # Infrastructure configuration (Supabase, etc.)
+├── gce-deploy.yaml        # Google Cloud Engine deployment config
+├── build-gce.sh           # GCE deployment script
+├── DEPLOY_GCE.md          # GCE deployment guide
+└── temporal/              # Development files and cleanup
 ```
 
 ## ✨ Features
@@ -21,14 +24,12 @@ An intelligent career companion that automatically tailors your CV and matches y
 - **Real-time Job Processing** - Background job queue with live progress tracking
 - **Advanced Job Analysis** - Extract requirements, skills, and ATS keywords from job descriptions
 - **Document Vault** - Secure document storage with sharing and version control
-- **Job Site Monitoring** - Automated crawling and intelligent job matching
 
 ### 🔧 **Technical Features**
+- **Production Ready** - Optimized Docker containers for GCE deployment
+- **Scalable Architecture** - Kubernetes deployment with auto-scaling
+- **Security First** - Non-root containers, health checks, resource limits
 - **Real-time Updates** - WebSocket connections for live job progress
-- **Comprehensive Testing** - Unit, integration, and E2E test coverage
-- **Production Monitoring** - Prometheus metrics, Grafana dashboards, log aggregation
-- **Scalable Architecture** - Docker containers, Redis queue, background workers
-- **Security First** - Row-level security, input validation, audit logging
 
 ## Tech Stack
 
@@ -46,37 +47,18 @@ An intelligent career companion that automatically tailors your CV and matches y
 - Supabase for data persistence
 - PDF generation with WeasyPrint
 
-### Infrastructure (infra/)
+### Infrastructure
+- Google Cloud Engine (GKE)
 - Supabase (Database, Auth, Storage)
-- Vercel (Frontend deployment)
-- Fly.io/Railway (Backend deployment)
+- Docker containers
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
+### Local Development
 
-- Node.js 18+ and npm
-- Python 3.11+
-- Supabase account
-- Google Gemini API key
-
-### Setup
-
-1. **Clone the repository**
+1. **Clone and setup backend**
    ```bash
    git clone <repository-url>
-   cd ai-cv-agent
-   ```
-
-2. **Set up the frontend**
-   ```bash
-   cd web
-   npm install
-   npm run dev
-   ```
-
-3. **Set up the backend**
-   ```bash
    cd agent
    pip install -r requirements.txt
    cp .env.example .env
@@ -84,24 +66,61 @@ An intelligent career companion that automatically tailors your CV and matches y
    python main.py
    ```
 
-4. **Configure Supabase**
-   - Create a new Supabase project
-   - Run the migrations in `infra/supabase/migrations/`
-   - Configure authentication and storage buckets
-   - Update environment variables
+2. **Setup frontend**
+   ```bash
+   cd web
+   npm install
+   npm run dev
+   ```
+
+### MVP Testing (Cloud Run) - Recommended
+
+```bash
+# Set your GCP project ID
+export PROJECT_ID="your-gcp-project-id"
+
+# Deploy to Cloud Run (pay-per-request, scales to zero)
+./deploy-cloudrun.sh $PROJECT_ID
+```
+
+See [DEPLOY_CLOUDRUN.md](DEPLOY_CLOUDRUN.md) for detailed instructions.
+
+### Production Deployment (GKE)
+
+```bash
+# For production with high traffic
+./build-gce.sh $PROJECT_ID
+```
+
+See [DEPLOY_GCE.md](DEPLOY_GCE.md) for Kubernetes deployment.
+
+## Configuration
+
+### Environment Variables
+
+Backend (`agent/.env`):
+- `SUPABASE_URL`: Your Supabase project URL
+- `SUPABASE_ANON_KEY`: Your Supabase anon key
+- `GOOGLE_API_KEY`: Your Google Gemini API key
+- `JWT_SECRET`: Random secret for JWT signing
+
+Frontend (`web/.env.local`):
+- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon key
+- `NEXT_PUBLIC_API_URL`: Backend API URL
 
 ## Development
 
-- Frontend runs on http://localhost:3000
-- Backend API runs on http://localhost:8000
-- API documentation available at http://localhost:8000/docs
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API docs: http://localhost:8000/docs
 
 ## Security
 
+- Non-root Docker containers
 - Row-level security (RLS) for all user data
 - JWT-based authentication
-- PII redaction in logs
-- Secure file storage with signed URLs
+- Resource limits and health checks
 - Input validation and sanitization
 
 ## License

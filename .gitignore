@@ -54,9 +54,6 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
 # IDE
 .vscode/
 .idea/
@@ -84,10 +81,6 @@ htmlcov/
 *.db
 *.sqlite3
 
-# Temporary files
-*.tmp
-*.temp
-
 # Uploads
 uploads/
 temp/
@@ -96,9 +89,37 @@ temp/
 .vercel
 .render
 
-# Temporary files and development materials
+# Development and cleanup files (moved to temporal/)
+temporal/
 temp_files/
 *.tmp
 *.temp
 
+# GCE deployment generated files
+gce-deploy-configured.yaml
 
+# Test files and development artifacts
+test_*.py
+*test*.py
+main-*.py
+requirements-*.txt
+setup_*.bat
+*.bat
+
+# Development configs
+fly.toml
+railway.json
+docker-compose.staging.yml
+
+# Logo and assets (keep in temporal/)
+activcv-logo.*
+
+# Development documentation
+SETUP_LOCAL.md
+*_backup*
+*_old*
+
+# Monitoring and scripts (moved to temporal/)
+monitoring/
+scripts/
+.kiro/

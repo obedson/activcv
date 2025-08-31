@@ -8,8 +8,13 @@ from typing import Dict, Any, Optional, List
 from datetime import datetime
 from pathlib import Path
 import jinja2
-from weasyprint import HTML, CSS
 from io import BytesIO
+try:
+    from weasyprint import HTML, CSS
+    WEASYPRINT_AVAILABLE = True
+except ImportError:
+    WEASYPRINT_AVAILABLE = False
+    from app.services.pdf_generator_fallback import PDFGeneratorFallback
 
 from app.models.profile import CompleteProfile
 from app.models.jobs import Job, GeneratedCVCreate
@@ -386,32 +391,32 @@ class CVGeneratorService:
     def _generate_pdf(self, html_content: str, template: CVTemplate) -> bytes:
         """Generate PDF from HTML content"""
         try:
-            # Load CSS if available
-            css_path = self.templates_dir / template.css_file
-            css_content = ""
-            
-            if css_path.exists():
-                with open(css_path, 'r', encoding='utf-8') as f:
-                    css_content = f.read()
-            
-            # Generate PDF
-            html_doc = HTML(string=html_content)
-            css_doc = CSS(string=css_content) if css_content else None
-            
-            pdf_buffer = BytesIO()
-            if css_doc:
-                html_doc.write_pdf(pdf_buffer, stylesheets=[css_doc])
+            if WEASYPRINT_AVAILABLE:
+                # Load CSS if available
+                css_path = self.templates_dir / template.css_file
+                css_content = ""
+                
+                if css_path.exists():
+                    with open(css_path, 'r', encoding='utf-8') as f:
+                        css_content = f.read()
+                
+                # Generate PDF with WeasyPrint
+                html_doc = HTML(string=html_content)
+                css_doc = CSS(string=css_content) if css_content else None
+                
+                pdf_buffer = BytesIO()
+                if css_doc:
+                    html_doc.write_pdf(pdf_buffer, stylesheets=[css_doc])
+                else:
+                    html_doc.write_pdf(pdf_buffer)
+                
+                return pdf_buffer.getvalue()
             else:
-                html_doc.write_pdf(pdf_buffer)
-            
-            return pdf_buffer.getvalue()
+                # Use fallback PDF generator
+                return self._generate_fallback_pdf(html_content)
             
         except Exception as e:
             # Fallback to basic PDF generation
-            return self._generate_basic_pdf(html_content)
-    
-    def _generate_basic_pdf(self, html_content: str) -> bytes:
-        """Generate basic PDF as fallback"""
         try:
             html_doc = HTML(string=html_content)
             pdf_buffer = BytesIO()

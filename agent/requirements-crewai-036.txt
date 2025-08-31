@@ -1,7 +1,0 @@
-# Alternative CrewAI version - 0.36.0
-crewai==0.36.0
-langchain==0.1.20
-langchain-openai==0.0.6
-langchain-google-genai==0.0.11
-google-generativeai==0.3.2
-openai==1.101.0
