@@ -1,4 +1,4 @@
- """
+"""
 Document vault API endpoints
 """
 
