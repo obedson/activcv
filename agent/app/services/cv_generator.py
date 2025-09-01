@@ -418,13 +418,13 @@ class CVGeneratorService:
         except Exception as e:
             # Fallback to basic PDF generation
             try:
-            html_doc = HTML(string=html_content)
-            pdf_buffer = BytesIO()
-            html_doc.write_pdf(pdf_buffer)
-            return pdf_buffer.getvalue()
-        except Exception as e:
-            # Return empty PDF as last resort
-            return b"PDF generation failed"
+                html_doc = HTML(string=html_content)
+                pdf_buffer = BytesIO()
+                html_doc.write_pdf(pdf_buffer)
+                return pdf_buffer.getvalue()
+            except Exception as e:
+                # Return empty PDF as last resort
+                return b"PDF generation failed"
     
     async def _save_cv_file(self, user_id: str, pdf_content: bytes, filename: str) -> tuple[str, str]:
         """Save CV file to storage and return path and URL"""
