@@ -85,7 +85,8 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
-    HOST: str = "0.0.0.0"  # Added missing field    PORT: int = 8000
+    HOST: str = "0.0.0.0"  # Added missing field
+    PORT: int = 8000
     
     class Config:
         env_file = ".env"
