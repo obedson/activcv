@@ -1,24 +1,36 @@
-(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ git pull
-remote: Enumerating objects: 15, done.
-remote: Counting objects: 100% (15/15), done.
-remote: Compressing objects: 100% (2/2), done.
-remote: Total 8 (delta 6), reused 8 (delta 6), pack-reused 0 (from 0)
-Unpacking objects: 100% (8/8), 604 bytes | 201.00 KiB/s, done.
-From https://github.com/obedson/activcv
-   e27dcb0..95d4b61  main       -> origin/main
-Updating e27dcb0..95d4b61
-Fast-forward
- agent/app/api/v1/endpoints/document_vault.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ python main.py
+(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$  python main.py
 Traceback (most recent call last):
   File "/home/obedsonfield/activcv/agent/main.py", line 19, in <module>
     from app.api.v1.api import api_router
   File "/home/obedsonfield/activcv/agent/app/api/v1/api.py", line 7, in <module>
     from app.api.v1.endpoints import health, profiles, uploads, jobs, cover_letters, job_processing, document_vault, job_analysis, metrics
-  File "/home/obedsonfield/activcv/agent/app/api/v1/endpoints/document_vault.py", line 12, in <module>
-    from app.services.document_vault import get_document_vault_service, DocumentVaultService
-  File "/home/obedsonfield/activcv/agent/app/services/document_vault.py", line 16, in <module>
-    from app.services.storage import storage_service
-ImportError: cannot import name 'storage_service' from 'app.services.storage' (/home/obedsonfield/activcv/agent/app/services/storage.py). Did you mean: 'StorageService'?
+  File "/home/obedsonfield/activcv/agent/app/api/v1/endpoints/document_vault.py", line 17, in <module>
+    @router.get("/")
+     ^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/routing.py", line 995, in decorator
+    self.add_api_route(
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/routing.py", line 934, in add_api_route
+    route = route_class(
+            ^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/routing.py", line 555, in __init__
+    self.dependant = get_dependant(path=self.path_format, call=self.endpoint)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 292, in get_dependant
+    sub_dependant = get_param_sub_dependant(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 126, in get_param_sub_dependant
+    return get_sub_dependant(
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 162, in get_sub_dependant
+    sub_dependant = get_dependant(
+                    ^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 285, in get_dependant
+    param_details = analyze_param(
+                    ^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 488, in analyze_param
+    field = create_model_field(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/utils.py", line 98, in create_model_field
+    raise fastapi.exceptions.FastAPIError(
+fastapi.exceptions.FastAPIError: Invalid args for response field! Hint: check that <class 'supabase._sync.client.SyncClient'> is a valid Pydantic field type. If you are using a return type annotation that is not a valid Pydantic field (e.g. Union[Response, dict, None]) you can disable generating the response model from the type annotation with the path operation decorator parameter response_model=None. Read more: https://fastapi.tiangolo.com/tutorial/response-model/
 (venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ 
