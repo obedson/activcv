@@ -13,7 +13,7 @@ import logging
 
 from supabase import Client
 from app.core.config import settings
-from app.services.storage import storage_service
+from app.services.storage import StorageService
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class DocumentVaultService:
     
     def __init__(self, db: Client):
         self.db = db
-        self.storage = storage_service
+        self.storage = StorageService()
     
     async def store_document(
         self,
