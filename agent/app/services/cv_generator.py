@@ -417,7 +417,7 @@ class CVGeneratorService:
             
         except Exception as e:
             # Fallback to basic PDF generation
-        try:
+            try:
             html_doc = HTML(string=html_content)
             pdf_buffer = BytesIO()
             html_doc.write_pdf(pdf_buffer)
