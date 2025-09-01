@@ -1,36 +1,16 @@
-(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$  python main.py
+venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ python main.py
 Traceback (most recent call last):
-  File "/home/obedsonfield/activcv/agent/main.py", line 19, in <module>
-    from app.api.v1.api import api_router
-  File "/home/obedsonfield/activcv/agent/app/api/v1/api.py", line 7, in <module>
-    from app.api.v1.endpoints import health, profiles, uploads, jobs, cover_letters, job_processing, document_vault, job_analysis, metrics
-  File "/home/obedsonfield/activcv/agent/app/api/v1/endpoints/document_vault.py", line 17, in <module>
-    @router.get("/")
-     ^^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/routing.py", line 995, in decorator
-    self.add_api_route(
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/routing.py", line 934, in add_api_route
-    route = route_class(
-            ^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/routing.py", line 555, in __init__
-    self.dependant = get_dependant(path=self.path_format, call=self.endpoint)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 292, in get_dependant
-    sub_dependant = get_param_sub_dependant(
-                    ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 126, in get_param_sub_dependant
-    return get_sub_dependant(
-           ^^^^^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 162, in get_sub_dependant
-    sub_dependant = get_dependant(
-                    ^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 285, in get_dependant
-    param_details = analyze_param(
-                    ^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py", line 488, in analyze_param
-    field = create_model_field(
-            ^^^^^^^^^^^^^^^^^^^
-  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/fastapi/utils.py", line 98, in create_model_field
-    raise fastapi.exceptions.FastAPIError(
-fastapi.exceptions.FastAPIError: Invalid args for response field! Hint: check that <class 'supabase._sync.client.SyncClient'> is a valid Pydantic field type. If you are using a return type annotation that is not a valid Pydantic field (e.g. Union[Response, dict, None]) you can disable generating the response model from the type annotation with the path operation decorator parameter response_model=None. Read more: https://fastapi.tiangolo.com/tutorial/response-model/
+  File "/home/obedsonfield/activcv/agent/main.py", line 21, in <module>
+    from app.services.background_jobs import start_background_jobs, stop_background_jobs
+  File "/home/obedsonfield/activcv/agent/app/services/background_jobs.py", line 208, in <module>
+    background_service = BackgroundJobService()
+                         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/app/services/background_jobs.py", line 22, in __init__
+    self.db = Database.get_service_client()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/obedsonfield/activcv/agent/app/core/database.py", line 31, in get_service_client
+    settings.SUPABASE_SERVICE_KEY
+  File "/home/obedsonfield/activcv/agent/venv/lib/python3.12/site-packages/pydantic/main.py", line 761, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Settings' object has no attribute 'SUPABASE_SERVICE_KEY'. Did you mean: 'SUPABASE_SERVICE_ROLE_KEY'?
 (venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ 
