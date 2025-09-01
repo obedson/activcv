@@ -18,7 +18,7 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.api.v1.api import api_router
 from app.core.logging import setup_logging
-from app.services.background_jobs import start_background_jobs, stop_background_jobs
+# from app.services.background_jobs import start_background_jobs, stop_background_jobs
 from app.middleware.security import SecurityMiddleware, CSRFMiddleware
 
 
@@ -30,13 +30,13 @@ async def lifespan(app: FastAPI):
     
     # Start background jobs for crawling and matching
     if settings.ENABLE_BACKGROUND_JOBS:
-        start_background_jobs()
+        # start_background_jobs()
     
     yield
     
     # Shutdown
     if settings.ENABLE_BACKGROUND_JOBS:
-        stop_background_jobs()
+        # stop_background_jobs()
 
 
 app = FastAPI(
