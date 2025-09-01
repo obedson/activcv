@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     
     # Security
     SECRET_KEY: str = "your-secret-key-change-in-production"
+    JWT_SECRET: str = "your-jwt-secret-change-in-production"  # Added missing field
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
@@ -84,7 +85,7 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
-    PORT: int = 8000
+    HOST: str = "0.0.0.0"  # Added missing field    PORT: int = 8000
     
     class Config:
         env_file = ".env"
