@@ -489,5 +489,7 @@ class DocumentVaultService:
 
 
 # Global service instance
-def get_document_vault_service(db: Client) -> DocumentVaultService:
+def get_document_vault_service() -> DocumentVaultService:
+    from app.core.database import get_db
+    db = get_db()
     return DocumentVaultService(db)

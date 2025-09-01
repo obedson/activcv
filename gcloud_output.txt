@@ -1,34 +1,24 @@
-bedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ git stash
-Saved working directory and index state WIP on main: 98496e2 Clean project structure for production deployment
-obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ git pull
-Updating 98496e2..f34a724
+(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ git pull
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 8 (delta 6), reused 8 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (8/8), 604 bytes | 201.00 KiB/s, done.
+From https://github.com/obedson/activcv
+   e27dcb0..95d4b61  main       -> origin/main
+Updating e27dcb0..95d4b61
 Fast-forward
- agent/app/core/config.py |   7 +--
- gcloud_output.txt        | 445 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 449 insertions(+), 3 deletions(-)
- create mode 100644 gcloud_output.txt
-obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ Apply your stashed changes back
-git stash pop
--bash: Apply: command not found
-Auto-merging agent/app/core/config.py
-CONFLICT (content): Merge conflict in agent/app/core/config.py
-On branch main
-Your branch is up to date with 'origin/main'.
-
-Changes to be committed:
-  (use "git restore --staged <file>..." to unstage)
-        modified:   main.py
-        modified:   requirements.txt
-        modified:   ../deploy-cloudrun.sh
-
-Unmerged paths:
-  (use "git restore --staged <file>..." to unstage)
-  (use "git add <file>..." to mark resolution)
-        both modified:   app/core/config.py
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        ../build_error.txt
-
-The stash entry is kept in case you need it again.
-obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ 
+ agent/app/api/v1/endpoints/document_vault.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ python main.py
+Traceback (most recent call last):
+  File "/home/obedsonfield/activcv/agent/main.py", line 19, in <module>
+    from app.api.v1.api import api_router
+  File "/home/obedsonfield/activcv/agent/app/api/v1/api.py", line 7, in <module>
+    from app.api.v1.endpoints import health, profiles, uploads, jobs, cover_letters, job_processing, document_vault, job_analysis, metrics
+  File "/home/obedsonfield/activcv/agent/app/api/v1/endpoints/document_vault.py", line 12, in <module>
+    from app.services.document_vault import get_document_vault_service, DocumentVaultService
+  File "/home/obedsonfield/activcv/agent/app/services/document_vault.py", line 16, in <module>
+    from app.services.storage import storage_service
+ImportError: cannot import name 'storage_service' from 'app.services.storage' (/home/obedsonfield/activcv/agent/app/services/storage.py). Did you mean: 'StorageService'?
+(venv) obedsonfield@cloudshell:~/activcv/agent (indigo-cider-273615)$ 
