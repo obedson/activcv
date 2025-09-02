@@ -14,13 +14,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "AI CV Agent"
     
     # CORS
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000",
-        "https://*.vercel.app",
-        "https://activcv.com",
-        "https://www.activcv.com"
-    ]
+    ALLOWED_ORIGINS: List[str] = ["*"]
     
     # Supabase Configuration
     SUPABASE_URL: str = ""

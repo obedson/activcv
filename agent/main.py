@@ -30,13 +30,13 @@ async def lifespan(app: FastAPI):
     
     # Start background jobs for crawling and matching
     if settings.ENABLE_BACKGROUND_JOBS:
-        # start_background_jobs()
+        pass  # start_background_jobs()
     
     yield
     
     # Shutdown
     if settings.ENABLE_BACKGROUND_JOBS:
-        # stop_background_jobs()
+        pass  # stop_background_jobs()
 
 
 app = FastAPI(
@@ -53,14 +53,14 @@ from app.middleware.rate_limiting import RateLimitMiddleware, BurstRateLimitMidd
 # Add middleware in order (last added = first executed)
 app.add_middleware(RequestSanitizerMiddleware)
 app.add_middleware(InputValidationMiddleware)
-app.add_middleware(BurstRateLimitMiddleware)
-app.add_middleware(RateLimitMiddleware)
+# app.add_middleware(BurstRateLimitMiddleware)  # Requires Redis
+# app.add_middleware(RateLimitMiddleware)  # Requires Redis
 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["https://3000-cs-9791e14b-8896-4b7c-9685-0abcdee075c6.cs-europe-west1-haha.cloudshell.dev"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

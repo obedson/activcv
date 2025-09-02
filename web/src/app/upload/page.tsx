@@ -90,7 +90,7 @@ export default function UploadPage() {
       const formData = new FormData()
       formData.append('file', selectedFile)
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/uploads/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/uploads/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session?.access_token}`,
